@@ -36,4 +36,4 @@ This repository contains the source code for a Blog Platform. This platform allo
 Contributions are welcome! Please read the contributing guidelines before getting started.
 
 ## Contact
-If you have any questions, feel free to reach out to me at (codeshorts007@gmail.com).
+If you have any questions, feel free to reach out to me at (malika.aliraza@gmail.com).
