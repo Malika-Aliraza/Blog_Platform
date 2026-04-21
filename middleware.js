@@ -1,49 +1,60 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
 
 export function middleware(request) {
-  const AuthToken = cookies().get("authToken")?.value || "";
+  const authToken = request.cookies.get("authToken")?.value || "";
+  const pathname = request.nextUrl.pathname;
 
+  // Allow public API routes
   if (
-    request.nextUrl.pathname === "/api/login" ||
-    request.nextUrl.pathname === "/api/signup" ||
-    request.nextUrl.pathname === "/api/post" ||
-    request.nextUrl.pathname === "/api/search" ||
-    /^\/api\/post\/\w+$/.test(request.nextUrl.pathname)
+    pathname === "/api/login" ||
+    pathname === "/api/signup" ||
+    pathname === "/api/post" ||
+    pathname === "/api/search" ||
+    /^\/api\/post\/[^/]+$/.test(pathname)
   ) {
-    return null;
+    return NextResponse.next();
   }
 
-  const loggedInUserNotAccessPath =
-    request.nextUrl.pathname === "/login" ||
-    request.nextUrl.pathname === "/signup";
-
-  if (request.nextUrl.pathname === "/") {
-    return NextResponse.redirect(new URL("/home", request.nextUrl));
+  // Redirect root to home
+  if (pathname === "/") {
+    return NextResponse.redirect(new URL("/home", request.url));
   }
 
-  if (loggedInUserNotAccessPath) {
-    // if user is logged in, redirect to home page
-    if (AuthToken) {
-      return NextResponse.redirect(new URL("/home", request.nextUrl));
+  // Prevent logged-in users from visiting login/signup
+  if (pathname === "/login" || pathname === "/signup") {
+    if (authToken) {
+      return NextResponse.redirect(new URL("/home", request.url));
     }
-  } else {
-    // if user is not logged in, redirect to login page
-    if (!AuthToken) {
-      if (request.nextUrl.pathname.startsWith("/api")) {
-        return NextResponse.json(
-          { error: "You are not authorized" },
-          { status: 401 }
-        );
-      } else if (!AuthToken && request.nextUrl.pathname.startsWith("/home")) {
-        return NextResponse.redirect(new URL("/signup", request.nextUrl));
-      } else if (!AuthToken && request.nextUrl.pathname.startsWith("/myblog")) {
-        return NextResponse.redirect(new URL("/signup", request.nextUrl));
-      }
-    }
+    return NextResponse.next();
   }
+
+  // Protect private routes
+  const protectedRoutes =
+    pathname.startsWith("/home") ||
+    pathname.startsWith("/myblog");
+
+  if (protectedRoutes && !authToken) {
+    return NextResponse.redirect(new URL("/signup", request.url));
+  }
+
+  // Protect private API routes
+  if (pathname.startsWith("/api") && !authToken) {
+    return NextResponse.json(
+      { error: "You are not authorized" },
+      { status: 401 }
+    );
+  }
+
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/", "/signup", "/myblog", "/api/:path*"],
+  matcher: [
+    "/",
+    "/login",
+    "/signup",
+    "/home/:path*",
+    "/myblog/:path*",
+    "/api/:path*",
+  ],
 };
