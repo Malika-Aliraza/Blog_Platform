@@ -1,81 +1,94 @@
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+"use client";
+
+import { useState } from "react";
 import { SquarePen } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
 
 const EditProfile = ({ name, value, updateInfo, onChange }) => {
-  const { toast } = useToast();
+  const [open, setOpen] = useState(false);
+
   const updateInformation = () => {
     updateInfo();
-    toast({
-      title: `updated ${name} successfully`,
-      description: `Updated ${name} successfully. Please close this update box and refresh the page to see the changes.`,
-      variant: "default",
-    });
+
+    alert(
+      `Updated ${name} successfully.\nPlease refresh the page to see the changes.`
+    );
+
+    setOpen(false);
+
     setTimeout(() => {
       window.location.reload();
-    }, 1800);
+    }, 1500);
   };
+
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="ghost">
-          <SquarePen size={15} />
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Edit {name}</DialogTitle>
-          <DialogDescription>
-            {
-              "Update your details here. Don't forget to click 'Save' once you're finished making changes."
-            }
-          </DialogDescription>
-        </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right capitalize">
-              {name}
-            </Label>
-            {value?.length < 30 ? (
-              <Input
-                id="name"
-                defaultValue={value}
-                className="col-span-3"
-                onChange={onChange}
-              />
-            ) : (
-              <Textarea
-                id="name"
-                defaultValue={value}
-                className="col-span-3 hide-scrollbar"
-                onChange={onChange}
-                rows={5}
-                style={{
-                  overflow: "auto",
-                  scrollbarWidth: "none",
-                  "-ms-overflow-style": "none",
-                }}
-              />
-            )}
+    <>
+      {/* Edit Button */}
+      <button
+        onClick={() => setOpen(true)}
+        className="p-2 rounded-md hover:bg-gray-100 transition"
+      >
+        <SquarePen size={16} />
+      </button>
+
+      {/* Modal */}
+      {open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+          <div className="w-full max-w-lg rounded-xl bg-white p-6 shadow-xl">
+            {/* Header */}
+            <div className="mb-5">
+              <h2 className="text-xl font-semibold capitalize">
+                Edit {name}
+              </h2>
+              <p className="text-sm text-gray-500 mt-1">
+                Update your details here. Don’t forget to click
+                <span className="font-medium"> Save </span>
+                once you're finished making changes.
+              </p>
+            </div>
+
+            {/* Input Section */}
+            <div className="space-y-3">
+              <label className="block text-sm font-medium capitalize">
+                {name}
+              </label>
+
+              {value?.length < 30 ? (
+                <input
+                  type="text"
+                  defaultValue={value}
+                  onChange={onChange}
+                  className="w-full rounded-lg border border-gray-300 px-4 py-2 outline-none focus:ring-2 focus:ring-black"
+                />
+              ) : (
+                <textarea
+                  defaultValue={value}
+                  onChange={onChange}
+                  rows={5}
+                  className="w-full rounded-lg border border-gray-300 px-4 py-2 outline-none resize-none focus:ring-2 focus:ring-black"
+                />
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                onClick={() => setOpen(false)}
+                className="rounded-lg border px-4 py-2 text-sm font-medium hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={updateInformation}
+                className="rounded-lg bg-black px-5 py-2 text-sm font-medium text-white hover:opacity-90"
+              >
+                Save
+              </button>
+            </div>
           </div>
         </div>
-        <DialogFooter>
-          <Button onClick={updateInformation}>Save</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+      )}
+    </>
   );
 };
 
