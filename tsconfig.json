@@ -17,6 +17,11 @@
     "noEmit": true,
     "incremental": true,
     "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./*"
+      ]
+    },
     "strict": false,
     "module": "esnext",
     "resolveJsonModule": true,
@@ -35,6 +40,7 @@
   "include": [
     "next-env.d.ts",
     "**/*.js",
-    "**/*.jsx"
+    "**/*.jsx",
+    ".next/types/**/*.ts"
   ]
 }

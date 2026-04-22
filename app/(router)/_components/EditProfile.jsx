@@ -42,7 +42,7 @@ const EditProfile = ({ name, value, updateInfo, onChange }) => {
               <p className="text-sm text-gray-500 mt-1">
                 Update your details here. Don’t forget to click
                 <span className="font-medium"> Save </span>
-                once you're finished making changes.
+                once you&apos;re finished making changes.
               </p>
             </div>
 
