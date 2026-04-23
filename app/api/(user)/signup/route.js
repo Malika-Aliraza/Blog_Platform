@@ -1,4 +1,4 @@
-import prisma from "@/DB/db.config";
+import prisma from "@/db/db.config";
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
 

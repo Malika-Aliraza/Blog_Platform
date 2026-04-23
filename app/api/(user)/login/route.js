@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
-import prisma from "@/DB/db.config";
+import prisma from "@/db/db.config";
 import { createHmac, timingSafeEqual } from "crypto";
 
 export const runtime = "nodejs";
